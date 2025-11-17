@@ -1,0 +1,35 @@
+---
+- name: Playbook execute enforcing mode SELinux
+  hosts: all
+  become: true
+  tasks:
+    - name: Install package policycoreutils
+      ansible.builtin.package:
+        name: policycoreutils     
+        state: present
+      
+    - name: Enable SELinux
+      ansible.posix.selinux:
+        policy: targeted
+        state: permissive
+      register: selinux_status
+        
+    - name: get status
+      ansible.builtin.command: getenforce
+      register: status
+    
+    - name: Diplay status
+      ansible.builtin.debug:
+        var: status.stdout
+      
+    - name: change in grubby
+      ansible.builtin.command: "grubby --update-kernel ALL --remove-args selinux"
+      
+    - name: Reboot if SELinux change requires it
+      ansible.builtin.reboot:
+        msg: "Rebooting to apply SELinux changes"
+        pre_reboot_delay: 5
+        post_reboot_delay: 30
+        reboot_timeout: 600
+      when: selinux_status.reboot_required
+      
