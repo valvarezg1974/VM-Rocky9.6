@@ -13,7 +13,7 @@ N = 1
     config.vm.define "machine#{machine_id}" do |machine|
       machine.vm.hostname = "machine#{machine_id}"
       machine.vm.network "private_network", ip: "192.168.56.#{200+machine_id}"
-      #machine.vm.network "public_network", bridge: "Realtek 8852CE WiFi 6E PCI-E NIC"
+      machine.vm.network "public_network", bridge: "Realtek 8852CE WiFi 6E PCI-E NIC"
 
 		  machine.vm.provision "shell", inline: "echo 'Provisioning VM ...'"
 		
